@@ -1,0 +1,7 @@
+version(20180920)
+
+
+
+
+url(https://raw.githubusercontent.com/joymeng/apkTool_src/master/files/APK_Tool.exe)
+apkMd5Url(https://raw.githubusercontent.com/joymeng/apkTool_APK/master/files/updateFiles.txt)

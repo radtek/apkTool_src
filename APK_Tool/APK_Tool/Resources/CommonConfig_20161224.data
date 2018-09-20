@@ -1,0 +1,52 @@
+﻿{
+    "【删除游戏目录文件列表】": [
+	"res\values\public.xml"
+    ],
+    "【忽略目录文件列表】": [
+	"smali\com\ltsdk\demo",
+	"smali\org\fmod",
+	"lib\arm64-v8a",
+	"lib\armeabi",
+	"lib\mips",
+	"lib\x86",
+	"lib\x86_64",
+        "apktool.yml",
+
+	"smali\com\fxlib",
+        "smali\com\unity3d",
+        "smali\com\ltsdk\union\common",
+        "smali\com\ltsdk\union\util",
+        "smali\com\ltsdk\union\GameMainActivity",
+        "smali\com\ltsdk\union\LogoCallBack",
+        "smali\com\ltsdk\union\Ltsdk",
+        "smali\com\ltsdk\union\LtsdkExtkey",
+        "smali\com\ltsdk\union\LtsdkKey",
+        "smali\com\ltsdk\union\LtsdkListener",
+        "smali\com\ltsdk\union\R",
+        "smali\com\ltsdk\union\SplashActivity",
+        "smali\com\ltsdk\union\platform\LtsdkAdapter",
+        "smali\com\ltsdk\union\platform\LtsdkDemo",
+        "smali\com\ltsdk_entryDemo"
+    ],
+    "【附加拷贝目录文件列表】": [
+	"smali\{CHANNEL_package_PATH1}->smali\{package_PATH1}"
+    ],
+    "【Manifest.xml附加处理逻辑】": [
+        "remove GAME_MAIN_ACTIVITY/intent-filter",
+        "add THIS_MAIN_ACTIVITY to GAME_MAIN_ACTIVITY",
+        "remove THIS_MAIN_ACTIVITY",
+	"get MANIFEST/application/meta-data:XW_APPID set android:value={XW_APPID}",
+	"get MANIFEST/application/meta-data:XW_GAMEID set android:value={XW_GAMEID}"
+    ],
+    "【config配置信息添加或修改】": [
+	"google_publickey={google_publickey}",
+	"mol_secret_key={mol_secret_key}",
+	"mol_application_code={mol_application_code}"
+    ],
+    "【其他渠道参数替换文件列表】": [
+	"replace res\values\strings.xml:332076483797769 to {facebook_app_id}"
+    ],
+    "useCommonConfig": false,
+    "useAllChannelCommon": false,
+    "autoProcessIcon":true
+}

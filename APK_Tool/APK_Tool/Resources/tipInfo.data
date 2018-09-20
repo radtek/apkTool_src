@@ -1,0 +1,188 @@
+
+【删除游戏目录文件列表】
+如：smali\com\ltsdk\union
+在复制前先删除游戏中指定的目录或文件
+
+
+【忽略目录文件列表】
+如：smali\com\ltsdk
+(忽略目录 smali\com\ltsdk，忽略文件smali\com\ltsdk\LtsdkAdapter$5.smali)
+
+
+【附加拷贝目录文件列表】
+如：["smali\com\ltsdk\union\util","smali\com\ltsdk\union\platform\LtsdkYouku"]
+(附加拷贝目录smali\com\ltsdk\union\util， 拷贝文件LtsdkYouku.java生成的所有smali或目录LtsdkYouku）
+
+也可指定拷贝到其他路径
+如：smali\com\ltgame\cs\vivo\wxapi->smali\game\wxapi
+如：smali\com\ltgame\cs\vivo\wxapi\WXPayEntryActivity->smali\{package_PATH1}\wxapi\WXPayEntryActivity
+
+
+修改渠道包名路径：
+如：smali\com\ltgame\xiyou\g44937->smali\com\ltgame_test2\xiyou\g44937
+（修改包名路径，会复制原有路径下的所有文件，并修改所有文件对这些文件的引用路径信息。默认为渠道计费包解包路径。）
+
+如：smali\{CHANNEL_package_PATH1}->smali\{package_PATH1}
+（修改渠道包名路径中的所有文件，到新的包名路径）
+
+修改游戏包名路径：
+GAMEDIR:smali\{GAMEPRE_package_PATH1}->smali\{package_PATH1}
+（修改原有包名路径下的文件到新的包名路径下。GAMEDIR:标识游戏包解包后的路径。）
+
+忽略,不执行smali引用修改逻辑的文件列表
+[IGNORE:]assets\bin\Data\mainData,res\2.bin
+(示例, 修改包名路径时，不修改mainData中的信息。 GAMEDIR:smali\{GAMEPRE_package_PATH1}->smali\{package_PATH1} [IGNORE:]assets\bin\Data\mainData )
+
+
+【config配置信息添加或修改】
+ltsdk_debug=true
+access_platform=youku
+
+
+【Manifest.xml附加处理逻辑】 ——用于实现对Manifest.xml文件的修改
+
+添加子节点：（添加新的uses-permission到MANIFEST节点）
+add NEWNODE=<uses-permission android:name=android.permission.INTERNET/> to MANIFEST/CHILDS
+
+
+修改节点属性：（修改包名）
+get MANIFEST set package=com.ltgame.cs.youku
+如：get activity:com.bbk.payment.tenpay.VivoQQPayResultActivity/intent-filter/data set android:scheme=qwallet{package}
+
+
+删除节点的指定属性：
+get MANIFEST/application set android:banner=ATTR_NULL
+
+
+删除节点：
+remove uses-permission:android.permission.SEND_SMS
+
+删除MANIFEST的所有子节点
+remove MANIFEST/CHILDS
+
+
+
+
+【其他渠道参数替换文件列表】——修改文件中渠道参数为渠道参数通配符即可
+如：smali\com\ltsdk\file.txt
+
+也可直接指定替换文件中的特定 字符串1 -> 字符串2
+如：replace smali\wxapi\WXPayEntryActivity.smali:字符串1 to 字符串2
+如：replace smali\{package_PATH1}\wxapi\WXPayEntryActivity.smali:com/ltgame/cs/vivo to {package_PATH2}
+
+[AS_XML] 对指定路径下的xml文件，执行修改命令，如： 
+如： res/values/strings.xml AS_XML get string:app_name setValue {replace_app_name}
+修改strings.xml中的app_name
+
+
+【I2】 获取渠道参数通配符 ｛关键字｝ 如：｛access_platform｝在打包时会被替换为g44937
+【I2】 
+【I2】 获取渠道参数
+http://netunion.joymeng.com/index.php?m=Api&c=PackTool&a=channelParam&app_id=1000&channel_id=0002554
+【I2】 GAME_ID:000001
+【I2】 package:com.ltgame_test2.xiyou.g44937
+【I2】 version_name:1.1.0
+【I2】 version_code:1
+【I2】 is_landscape:true
+【I2】 screenOrientation:landscape
+【I2】 use_joymeng_login:false
+【I2】 platform_auto_login:true
+【I2】 access_platform:g44937
+【I2】 create_time:
+【I2】 replace_app_name:
+【I2】 remark:
+【I2】 GAMEID:1000
+【I2】 CHANNELID:0002554
+【I2】 package_PATH1:com\ltgame_test2\xiyou\g44937
+【I2】 package_PATH2:com/ltgame_test2/xiyou/g44937
+【I2】 access_platform_UPPER:G44937
+【I2】 
+【I2】 游戏原有包名信息
+【I2】 GAMEPRE_package:com.example.paymentdemo
+【I2】 GAMEPRE_package_PATH1:com\example\paymentdemo
+【I2】 
+【I2】 渠道计费包名信息
+【I2】 CHANNEL_package:com.ltgame.xiyou.g44937
+【I2】 CHANNEL_package_PATH1:com\ltgame\xiyou\g44937
+
+渠道参数可根据渠道需求在后台http://netunion.joymeng.com/index.php进行配置
+
+
+【游戏附加资源拷贝目录】
+示例： \\10.80.3.252\测试专用（勿动)\APK_Base\游戏裸包\1000\v1.0.0\附加资源\0001405
+在网游打包工具中，选择游戏和渠道，点击菜单：文件->游戏附加资源，会弹出对应游戏和渠道的资源目录，将要附加的资源添加至该目录下即可。
+修改游戏icon图像：将res修改了icon的res目录，添加至“游戏附加资源” 打包时，会自动替换
+
+
+【配置游戏Icon、Logo、渠道角标】
+autoProcessIcon = false时，不进行（Icon、Logo、渠道角标）的处理，默认为true
+
+方法一：在网游后台，配置渠道参数
+GAME_ICON:icon.png			// 设定icon.png为游戏icon
+GAME_LOGO:ltsdk_logo.png	// 设定ltsdk_logo.png为游戏logo
+CHANNEL_ICON:kugou_icon.png	// 设定kugou_icon.png为渠道角标
+
+方法二：在工具中点击菜单  文件->游戏Icon或目录
+在打开的目录中放入 以GAME_ICON、GAME_LOGO、CHANNEL_ICON命名的图像资源，
+如：GAME_ICON.png 该图像会在打包后作为游戏Icon
+
+若设置了渠道角标图像，则打包时会自动将渠道角标与游戏icon合并，并自动生成android多种适配的尺寸。
+若未设置该渠道角标，则只将游戏icon，生成多种适配尺寸
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+附录：
+
+path: 指代节点
+// path路径，以<manifest/>为根节点，(形如 manifest/application/activity:com.shjc.jsbc.Main) 对应一个唯一的Activity
+// MANIFEST					(指代<manifest/>节点的path路径)
+// GAME_MAIN_ACTIVITY      （指代游戏入口Activity Path）
+// THIS_MAIN_ACTIVITY      （指代当前配置计费包apk的Activity Path）
+
+
+属性节点：
+/// 如，
+/// uses-permission:android.permission.SEND_SMS
+/// application/activity:com.shjc.jsbc.Main 或
+/// activity:com.shjc.jsbc.Main
+/// service:com.lenovo.AppCheckService
+/// meta-data:lenovo.gamesdk.new
+/// receiver:com.lenovo.lsf.push.receiver.PushReceiver
+
+
+Manifest处理命令：
+/// add path1 to path2      （合并节点path1的信息到path2）
+/// replace_app_namepath1 by path2  （使用path2处的节点替换path1对应的节点）
+/// remove path             （删除path处的节点）
+/// get path set attr       （获取指定的节点，并修改其属性值attr）
+
+remove MANIFEST
+（移除MANIFEST节点）
+
+remove MANIFEST/CHILDS
+（移除MANIFEST的所有子节点）
+
+get path set version=1.0 encoding=utf-8 standalone=no 
+（可一次修改多条属性值）
+
+
+如：[ "remove GAME_MAIN_ACTIVITY/intent-filter", "add THIS_MAIN_ACTIVITY to GAME_MAIN_ACTIVITY", "remove THIS_MAIN_ACTIVITY"]  
+（执行操作移除游戏入口Activity中的intent-filter，混合计费包apk的入口Activity中的属性和子节点到游戏入口Activity, 移除计费文件的入口Activity节点）
+（注：在执行Manifest.xml文件混合时，会将manifest和application合并为同一个节点路径manifest/application,保留所有的activity子节点，此时Activity中有两个入口分别为GAME_MAIN_ACTIVITY和THIS_MAIN_ACTIVITY，
+使用以上命令合并计费apk入口Activity到游戏入口Activity）
+
+//string[] cmd = { "remove GAME_MAIN_ACTIVITY/intent-filter", "add activity:com.ltsdk_entryDemo.LogoActivity to GAME_MAIN_ACTIVITY", "remove activity:com.ltsdk_entryDemo.LogoActivity" };
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+【其他】
+---------------------------------------
+从命令行调用打包工具示例：
+
+set APKTOOL="D:\sci\Visual Studio 2008\Projects\APK_Tool\APK_Tool\bin\Debug\APK_Tool.exe"
+
+%APKTOOL% GAMEID=1001 CHANNELID=0000001,0001381 "APK=D:\sci\网游打包工具2\APK_Base\游戏裸包\1001\v2.0.1\ltsdk_Demo_1.apk" SIGN=letang "OUTDIR=C:\Users\wangzhongyuan\Desktop\test\out" "ICONDIR=C:\Users\wangzhongyuan\Desktop\test\Icon,C:\Users\wangzhongyuan\Desktop\test\drawable"
+
+---------------------------------------

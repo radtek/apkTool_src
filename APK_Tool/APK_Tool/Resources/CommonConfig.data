@@ -1,0 +1,40 @@
+﻿{
+    "【删除游戏目录文件列表】": [
+        
+    ],
+    "【忽略目录文件列表】": [
+        "smali\com\unity3d",
+        "smali\com\ltsdk_entryDemo",
+	"smali\com\ltsdk\demo",
+	"smali\org\fmod",
+        "apktool.yml",
+	"lib\arm64-v8a",
+	"lib\mips",
+	"lib\x86",
+	"lib\x86_64"
+    ],
+    "【附加拷贝目录文件列表】": [
+	"lib\armeabi->lib\armeabi-v7a"
+    ],
+    "【Manifest.xml附加处理逻辑】": [
+        "remove GAME_MAIN_ACTIVITY/intent-filter",
+        "add THIS_MAIN_ACTIVITY to GAME_MAIN_ACTIVITY",
+        "remove THIS_MAIN_ACTIVITY",
+        "get MANIFEST/application/meta-data:HS_APPID set android:value={app_id}",
+        "get MANIFEST/application/meta-data:HS_CLIENTID set android:value={client_id}",
+        "get MANIFEST/application/meta-data:HS_CLIENTKEY set android:value={client_key}"
+    ],
+    "【config配置信息添加或修改】": [
+	"app_id={app_id}",
+	"app_key={app_key}",
+	"ltsdk_showloginloading=false",
+	"lt_islandscape={is_landscape}",
+	"ltsdk_debug=false"
+    ],
+    "【其他渠道参数替换文件列表】": [
+	"replace_app_nameAndroidManifest.xml:landscape to {screenOrientation}"
+    ],
+    "useCommonConfig": false,
+    "useAllChannelCommon": false,
+    "autoProcessIcon":true
+}

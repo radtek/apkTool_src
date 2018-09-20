@@ -1,0 +1,46 @@
+﻿{
+    "【删除游戏目录文件列表】": [
+        
+    ],
+    "【忽略目录文件列表】": [
+        "smali\com\unity3d",
+        "smali\com\ltsdk_entryDemo",
+	"smali\com\ltsdk\demo",
+	"smali\org\fmod",
+        "apktool.yml",
+	"lib\arm64-v8a",
+	"lib\armeabi",
+	"lib\mips",
+	"lib\x86",
+	"lib\x86_64",
+
+	"smali\{CHANNEL_package_PATH1}\R",
+	"smali\{CHANNEL_package_PATH1}\BuildConfig",
+	"res\values\public.xml"
+    ],
+    "【附加拷贝目录文件列表】": [
+        "GAMEDIR:smali\{GAMEPRE_package_PATH1}\R->smali\{package_PATH1}\R [IGNORE:]assets\bin\Data\mainData",
+        "GAMEDIR:smali\{GAMEPRE_package_PATH1}\BuildConfig->smali\{package_PATH1}\BuildConfig [IGNORE:]assets\bin\Data\mainData"
+    ],
+    "【Manifest.xml附加处理逻辑】": [
+        "remove GAME_MAIN_ACTIVITY/intent-filter",
+        "add THIS_MAIN_ACTIVITY to GAME_MAIN_ACTIVITY",
+        "remove THIS_MAIN_ACTIVITY",
+
+	"remove activity:com.ltsdk.demo.AnZhiTestActivity"
+    ],
+    "【config配置信息添加或修改】": [
+	"anzhi_appkey={anzhi_appkey}",
+	"anzhi_appsecret={anzhi_appsecret}",
+
+	"ltsdk_showloginloading=false",
+	"lt_islandscape={is_landscape}",
+	"ltsdk_debug=false"
+    ],
+    "【其他渠道参数替换文件列表】": [
+	"replace AndroidManifest.xml:landscape to {screenOrientation}"
+    ],
+    "useCommonConfig": false,
+    "useAllChannelCommon": false,
+    "autoProcessIcon":true
+}
