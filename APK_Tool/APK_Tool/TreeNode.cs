@@ -462,6 +462,10 @@ namespace APK_Tool
                         call("【E】渠道包中存在与游戏包同名冲突的节点 <" + child.SortKey() + ">");
                 }
 
+                String tmp2 = "";
+                if(child.SortKey().Contains("Platform.AppCompat.Light")) 
+                    tmp2 = child.SortKey();
+
                 // 将child节点的属性和其子节点，合并到查找到的相似的子节点中
                 node.Combine(child);
             }
@@ -820,6 +824,21 @@ namespace APK_Tool
         {
             if (this == null || node == null) return false;
             if (!this.name.Equals(node.name)) return false;       // 名称不相同
+
+            // 节点主键名称
+            String[] keyAttrs = { "name", "android:name", "android:id", "android:color" };
+            foreach (string keyAttr in keyAttrs)
+            {
+                // 名称相同，则视作同一个节点
+                if (this.attributes.Contains(keyAttr) && node.attributes.Contains(keyAttr))
+                {
+                    String ThisName = this.attributes.Get(keyAttr);
+                    String NodeName = node.attributes.Get(keyAttr);
+
+                    if (ThisName.Equals(NodeName)) return true;
+                }
+            }
+
             if (!this.attributes.Equals(node.attributes)) return false; // 属性不相同
             return true;
         }
@@ -1246,6 +1265,27 @@ namespace APK_Tool
         }
 
         /// <summary>
+        /// 获取首个节点，非<?xml></xml>节点
+        /// </summary>
+        /// <param name="list"></param>
+        /// <returns></returns>
+        private static List<xmlNode>  getFirstNode(List<xmlNode> list)
+        {
+            List<xmlNode> tmp = new List<xmlNode>();
+
+            bool finish = false;
+            foreach (xmlNode N in list)
+            {
+                if (finish) break;
+
+                if (!N.isDeclarNode) finish = true;
+                tmp.Add(N);
+            }
+
+            return tmp;
+        }
+
+        /// <summary>
         /// 从文件中载入xml文件, 先复制FileTarget，在添加FileSource，输出到outFile
         /// </summary>
         public static void Combine(string FileSource, string FileTarget, string outFile, bool isManifest, List<string> cmds, Cmd.Callback call=null)
@@ -1257,8 +1297,9 @@ namespace APK_Tool
             //FileProcess.SaveProcess(xml, outFile);
 
             List<xmlNode> list = xmlNode.Combine(xmlSource, xmlTarget, isManifest, call);   // 执行Manifest简单混合
+            //string xml = xmlNode.ToString(list);
+            string xml = xmlNode.ToString(getFirstNode(list));
 
-            string xml = xmlNode.ToString(list);
             FileProcess.SaveProcess(xml, outFile);                          // 保存文件
 
             //Manifest manifest = new Manifest(list, outFile);                // 创建Manifest对象
