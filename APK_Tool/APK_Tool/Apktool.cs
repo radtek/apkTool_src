@@ -59,7 +59,7 @@ namespace APK_Tool
         public static String makeDir(String dir, bool useTimeMode = true)
         {
             String tmpDir = dir;                            // 生成新的路径
-            if(useTimeMode) tmpDir = dir + "_@_" + DateTime.Now.ToString("yyyy_MM_dd_hh.mm.ss"); 
+            if(useTimeMode) tmpDir = dir + "_@_" + DateTime.Now.ToString("yyyy_MM_dd_HH.mm.ss"); 
 
             if (System.IO.Directory.Exists(tmpDir))         // 若目标路径已存在,则删除
                 Directory.Delete(tmpDir, true);

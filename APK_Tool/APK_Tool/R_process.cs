@@ -20,7 +20,7 @@ namespace APK_Tool
 
 
         // 执行R文件资源id生成逻辑
-        public static void Start(String dirTarget, String dirSource, Cmd.Callback call, bool isdebug = false)
+        public static bool Start(String dirTarget, String dirSource, Cmd.Callback call, bool apktool_yml_process=false)
         {
             if (call != null) call("【L】5、R$*smali资源编译,逻辑开始...");
             String GAMEPRE_package = Settings.channel_param["GAMEPRE_package"];     // 游戏原有包名
@@ -39,7 +39,9 @@ namespace APK_Tool
             
 
             // 根据现有资源，生成新的R$type.smali文件
-            R_process.UpdatePublicXML(dirTarget, call);                                     // 从游戏解包资源生成新的public.xml
+            bool R_result = R_process.UpdatePublicXML(dirTarget, call);                                     // 从游戏解包资源生成新的public.xml
+            if (!R_result) return false;
+
             R_process.genrateResDic = R_process.getResDic(dirTarget + @"\res\values\public.xml", call);  // 获取新生成的R资源id信息
 
             if (call != null) call("【I】- 6.根据public.xml中资源id信息，生成新的R$*.smali文件...");
@@ -64,7 +66,9 @@ namespace APK_Tool
 
             if (call != null) call("【I】R$*.smali文件处理结束\r\n");
 
-            appendunknown(dirTarget, call);     // 修改apktool.yml中的Unknown文件列表
+            if(apktool_yml_process) appendunknown(dirTarget, call);     // 修改apktool.yml中的Unknown文件列表
+
+            return true;
         }
 
         // 替换除包名路径下，所有R文件中的id信息
@@ -81,7 +85,10 @@ namespace APK_Tool
                     //string relative = ApkCombine.relativePath(R_smaliDir, unpackDir);
                     //if (relative.StartsWith("smali\\android\\")) continue;
                     //else if (relative.StartsWith("smali\\com\\helpshift")) continue;
-                    
+
+                    //string ortherR = ApkCombine.relativePath(R_smaliDir, unpackDir);
+                    //if (ortherR.Contains(@"\android\")) continue;     // 忽略android路径下的R文件修改
+
                     if (call != null) call("【I】- 7." + ++i + " 修改路径" + ApkCombine.relativePath(R_smaliDir, unpackDir) + "下所有R文件id信息");
                     update_RDirIds(R_smaliDir, DicSrc, DicTar, call); 
                 }
@@ -442,7 +449,7 @@ namespace APK_Tool
         } 
 
         //从dirTarget目录下获取res资源，重新编译生成public.xml
-        private static void UpdatePublicXML(String dirTarget, Cmd.Callback call, bool isdebug = false)
+        private static bool UpdatePublicXML(String dirTarget, Cmd.Callback call)
         {
             ToolSetting settting = ToolSetting.Instance();  // 载入设置信息
 
@@ -450,7 +457,11 @@ namespace APK_Tool
             String emptyApk = DependentFiles.curDir() + "\\tools\\Empty.apk";   // 空项目资源路径
             if (emptyApk.Contains("\\\\")) emptyApk = emptyApk.Replace("\\\\", "\\");
             String emptyDir = Apktool.unPackage(emptyApk, null, false);         // 解包空apk
-            if (emptyDir.Contains("【E】") && call != null) call("【E】  解包Empty.apk异常");
+            if (emptyDir.Contains("【E】") && call != null)
+            {
+                call("【E】  解包Empty.apk异常");
+                return false;
+            }
 
             if (call != null) call("【I】-   复制游戏res资源");
             String Res = emptyDir + "\\res";
@@ -463,12 +474,16 @@ namespace APK_Tool
             {
                 call("【E】  打包Empty.apk异常");
                 call("【E】  异常信息：" + apkFile);
+                return false;
             }
 
             if (call != null) call("【I】- 4.解包Empty.apk");
             string unpackDir = Apktool.unPackage(apkFile, null, false);         // 使用apktool进行apk的解包，生成新的public.xml
-            if (unpackDir.Contains("【E】") || unpackDir.Trim().Equals("")) 
-                if(call != null) call("【E】  解包Empty.apk异常");
+            if (unpackDir.Contains("【E】") || unpackDir.Trim().Equals(""))
+            {
+                if (call != null) call("【E】  解包Empty.apk异常");
+                return false;
+            }
             
             if (call != null) call("【I】- 5.复制生成的public.xml文件，到游戏res目录中");
             String relativePath = @"\res\values\public.xml";
@@ -485,6 +500,8 @@ namespace APK_Tool
             Directory.Delete(emptyDir, true);       // 删除空项目解包文件
             File.Delete(apkFile);                   // 删除生成的临时文件
             Directory.Delete(unpackDir, true);      // 删除空工程解包目录
+
+            return true;
         }
 
         // 从public.xml创建res资源索引信息

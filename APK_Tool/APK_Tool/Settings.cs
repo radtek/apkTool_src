@@ -856,6 +856,9 @@ namespace APK_Tool
         [JsonProperty("R资源文件id处理")]
         public bool R_Process = true;                            // 是否自动对R资源文件进行处理
 
+        [JsonProperty("修改apktool.yml")]
+        public bool apktool_yml_Process = false;                     // 是否修改apktool.yml
+
         /// <summary>
         /// 向ChannelList中添加本地配置的渠道信息
         /// </summary>

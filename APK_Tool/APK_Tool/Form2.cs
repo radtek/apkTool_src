@@ -363,7 +363,11 @@ namespace APK_Tool
 
             //-------------------------5
             // 执行R文件修改逻辑
-            if (toolSet.R_Process) R_process.Start(dirTarget, dirSource, call);
+            if (toolSet.R_Process)
+            {
+                bool R_result = R_process.Start(dirTarget, dirSource, call, toolSet.apktool_yml_Process);
+                if (!R_result) return;
+            }
 
             //String path = R_process.create_publicXML(dirTarget, call);
             //String package = Settings.channel_param["package"];                     // 获取包名信息
@@ -393,7 +397,7 @@ namespace APK_Tool
         {
             string xmlTarget = FileProcess.fileToString(dirDest.Text);
             xmlNode N = xmlNode.Parse(xmlTarget)[1];
-            String tmp = "";
+            //String tmp = "";
 
             List<String> cmds = new List<String>();
             cmds.Add("remove GAME_MAIN_ACTIVITY/intent-filter");
