@@ -543,6 +543,12 @@ namespace APK_Tool
                         ToolSetting.confirmDir(Apktool.outputAPK_dir);  // 确保输出目录存在
                         Apktool.outputAPK_name = selectGameId + "_" + channelId + "_" + versionName + "_" +
                             versionCode + "_" + comboBox_sign.Text + "_" + gameName + "_" + channelName + "_" + comboBox_version.Text.Trim() + ".apk";
+
+                        if (Apktool.outputAPK_name.Contains(":") || Apktool.outputAPK_name.Contains("："))
+                        {
+                            Apktool.outputAPK_name = Apktool.outputAPK_name.Replace(":", "_").Replace("：", "_");
+                        }
+                         
                         Apktool.ProcessTmp_dir = settting.ProcessTmp_dir;
 
 
