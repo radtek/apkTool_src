@@ -146,7 +146,7 @@ namespace APK_Tool
             try
             {
                 String userName = System.Environment.UserName;
-                String tmpApk = @"C:\Users\" + userName + @"\apktool\framework\1.apk";
+                String tmpApk = @"C:\Users\" + userName + @"\AppData\Local\apktool\framework\1.apk";
                 if (File.Exists(tmpApk)) File.Delete(tmpApk);
             }
             catch (Exception ex) { }
