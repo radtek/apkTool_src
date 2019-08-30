@@ -365,7 +365,7 @@ namespace APK_Tool
             // 执行R文件修改逻辑
             if (toolSet.R_Process)
             {
-                bool R_result = R_process.Start(dirTarget, dirSource, call, toolSet.apktool_yml_Process);
+                bool R_result = R_process.Start(dirTarget, dirSource, call, toolSet.apktool_yml_Process, toolSet.R_Process_Game);
                 if (!R_result) return;
             }
 

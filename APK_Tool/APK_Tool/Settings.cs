@@ -854,7 +854,10 @@ namespace APK_Tool
         public List<string> channelsInfo = new List<string>();       // config.txt附加添加或修改的信息内容
 
         [JsonProperty("R资源文件id处理")]
-        public bool R_Process = true;                            // 是否自动对R资源文件进行处理
+        public bool R_Process = true;                               // 是否自动对R资源文件进行处理
+
+        [JsonProperty("游戏R资源文件id处理")]
+        public bool R_Process_Game = true;                            // 是否自动对R资源文件进行处理
 
         [JsonProperty("修改apktool.yml")]
         public bool apktool_yml_Process = false;                     // 是否修改apktool.yml

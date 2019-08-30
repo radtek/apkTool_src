@@ -20,7 +20,7 @@ namespace APK_Tool
 
 
         // 执行R文件资源id生成逻辑
-        public static bool Start(String dirTarget, String dirSource, Cmd.Callback call, bool apktool_yml_process=false)
+        public static bool Start(String dirTarget, String dirSource, Cmd.Callback call, bool apktool_yml_process = false, bool R_Process_Game = false)
         {
             if (call != null) call("【L】5、R$*smali资源编译,逻辑开始...");
             String GAMEPRE_package = Settings.channel_param["GAMEPRE_package"];     // 游戏原有包名
@@ -62,7 +62,7 @@ namespace APK_Tool
             // 修改所有非包名路径下的R文件中的id信息
             if (call != null) call("【I】- 7.修改所有非包名路径下的R文件中的id信息");
             //if (call != null) call("【I】- 7.暂时屏蔽");
-            updateALL_RIds(dirTarget, package, channelResDic, genrateResDic, call);
+            updateALL_RIds(dirTarget, package, gameResDic, channelResDic, genrateResDic, call, R_Process_Game);
 
             if (call != null) call("【I】R$*.smali文件处理结束\r\n");
 
@@ -72,7 +72,7 @@ namespace APK_Tool
         }
 
         // 替换除包名路径下，所有R文件中的id信息
-        public static void updateALL_RIds(String unpackDir, String package, Dictionary<String, List<xmlNode>> DicSrc, Dictionary<String, List<xmlNode>> DicTar, Cmd.Callback call)
+        public static void updateALL_RIds(String unpackDir, String package, Dictionary<String, List<xmlNode>> gemeDicSrc, Dictionary<String, List<xmlNode>> DicSrc, Dictionary<String, List<xmlNode>> DicTar, Cmd.Callback call, bool R_Process_Game = false)
         {
             String packagePath = unpackDir + "\\smali\\" + package.Trim('.').Replace('.', '\\');
             List<String> R_path = getR_smaliPath(unpackDir);
@@ -89,8 +89,13 @@ namespace APK_Tool
                     //string ortherR = ApkCombine.relativePath(R_smaliDir, unpackDir);
                     //if (ortherR.Contains(@"\android\")) continue;     // 忽略android路径下的R文件修改
 
+                    //String relaPath = ApkCombine.relativePath(R_smaliDir, unpackDir);
+                    //if (relaPath.Equals(@"smali\com\google\android\gms\common")) 
+                    //    relaPath = relaPath + "";
+
                     if (call != null) call("【I】- 7." + ++i + " 修改路径" + ApkCombine.relativePath(R_smaliDir, unpackDir) + "下所有R文件id信息");
-                    update_RDirIds(R_smaliDir, DicSrc, DicTar, call); 
+                    update_RDirIds(R_smaliDir, DicSrc, DicTar, call);
+                    if(R_Process_Game) update_RDirIds(R_smaliDir, gemeDicSrc, DicTar, call);   // 修改游戏包中对应的资源id
                 }
             }
         }
@@ -303,12 +308,25 @@ namespace APK_Tool
             foreach (String name in dicSrc.Keys)
             {
                 String id = dicSrc[name];
+
+                if (!data.Contains(id))     // 若smali文件中不含有旧的资源id,则从smali文件中解析旧的资源id信息
+                {
+                    String idName = name;
+                    //if (idName.Equals("string:common_google_play_services_unknown_issue"))
+                    //    idName = idName + "";
+                    if (idName.Contains(":")) idName = idName.Substring(idName.IndexOf(":") + 1);
+
+                    String idTmp = getSmaliId(data, idName);
+                    if (!idTmp.Equals("")) id = idTmp;
+                }
+
                 if (data.Contains(id))
                 {
                     if (id.EndsWith("0000")) contains0000 = true;
                     if(dicTar.ContainsKey(name))        // 替换data中同名name对应的id值
                     {
-                        String idTar = dicTar[name];    // 目标id值
+                        String idTar = dicTar[name];    // 目标id值 
+
                         if (!id.Equals(idTar))
                         {
                             String idTarTmp = "0x_@_" + idTar.Substring("0x".Length);  // 替换0x7f00001这样的id串为0x_@_7f00001，避免重复，文件中全部id替换完成后，在统一替换回0x7f00001串
@@ -318,6 +336,7 @@ namespace APK_Tool
                     }
                     else if (call != null) call("【E】当前新生成的public.xml文件中，不含有资源" + name + "!");
                 }
+                
             }
             if (data.Contains("0x_@_")) data = data.Replace("0x_@_", "0x"); // 剔除附加进去的"_@_"
             if (contains0000 && data.Contains("const/high16"))
@@ -327,6 +346,23 @@ namespace APK_Tool
             }
 
             return data;
+        }
+
+        /// <summary>
+        /// 获取smali文件中对应的资源id信息
+        /// </summary>
+        private static String getSmaliId(String data, String name)
+        {
+            String Id = "";
+            String nameKey = " " + name + ":I = ";
+            if (data.Contains(nameKey)) // 错误id值纠正 .field public static final common_google_play_services_unknown_issue:I = 0x7f060008
+            {
+                int indexS = data.IndexOf(nameKey) + nameKey.Length;
+                int indexE = data.IndexOf("\n", indexS);
+                Id = data.Substring(indexS, indexE - indexS).Trim();
+            }
+
+            return Id;
         }
 
         // 将节点<public type="attr" name="circle_radius" id="0x7f010000" />转化为name到id的映射表

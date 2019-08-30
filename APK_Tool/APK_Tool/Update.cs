@@ -11,7 +11,7 @@ namespace APK_Tool
     {
         //public static string ToolsName = "easyIcon";          // 工具名称
         static string ToolsName = "APK打包混合工具";            // 工具名称
-        static long curVersion = 20180925;                      // 记录当前软件版本信息
+        static long curVersion = 20190830;                      // 记录当前软件版本信息
         public static string apkMd5Url = "";                    // apk资源文件Md5信息地址
 
         /// <summary>
